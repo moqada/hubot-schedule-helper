@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">test/Scheduler-spec.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <a data-ice="repoURL" href="https://github.com/moqada/hubot-schedule-helper.git" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Job.js~Job.html">Job</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Scheduler.js~Scheduler.html">Scheduler</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors.js~AlreadyPassedPattern.html">AlreadyPassedPattern</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors.js~InvalidPattern.html">InvalidPattern</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors.js~JobNotFound.html">JobNotFound</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-difference">difference</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getPatternType">getPatternType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isCronPattern">isCronPattern</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">test/Scheduler-spec.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;power-assert&apos;;
+import clearRequire from &apos;clear-require&apos;;
+import sinon from &apos;sinon&apos;;
+import {Job, Scheduler} from &apos;../src&apos;;
+
+/** @test {Scheduler} */
+describe(&apos;Scheduler&apos;, () =&gt; {
+  const storeKey = &apos;brain-key&apos;;
+  const now = Date.parse(&apos;2016-02-10T12:00:00Z&apos;);
+  const user = {name: &apos;moqada&apos;};
+  const meta = {message: &apos;we are!&apos;};
+  let robot = null;
+  let sandbox = null;
+  let DummyJob = null;
+  let spies = null;
+  let brainData = null;
+  beforeEach(() =&gt; {
+    clearRequire(&apos;node-schedule&apos;);
+    sandbox = sinon.sandbox.create();
+    sandbox.useFakeTimers(now);
+    brainData = {};
+    spies = {exec: sandbox.spy()};
+    DummyJob = class extends Job {
+      exec(robot_) {
+        spies.exec(robot_);
+      }
+    };
+    robot = {
+      brain: {
+        get: sandbox.spy(() =&gt; brainData),
+        on: sandbox.spy(),
+        set: sandbox.spy()
+      }
+    };
+  });
+  afterEach(() =&gt; {
+    sandbox.restore();
+  });
+
+  /** @test {Scheduler#constructor} */
+  context(&apos;constructor()&apos;, () =&gt; {
+    let scheduler = null;
+    const job = DummyJob;
+    beforeEach(() =&gt; {
+      scheduler = new Scheduler({robot, storeKey, job});
+    });
+
+    it(&apos;instance&apos;, () =&gt; {
+      assert(scheduler.robot === robot);
+      assert(scheduler.storeKey === storeKey);
+      assert(scheduler.JobCls === job);
+      assert(scheduler.jobMaxCount === 10000);
+    });
+
+    it(&apos;set brain.loaded&apos;, () =&gt; {
+      const {args} = robot.brain.on;
+      assert(args.length === 1);
+      assert(args[0][0] === &apos;loaded&apos;);
+      assert(typeof args[0][1] === &apos;function&apos;);
+    });
+  });
+
+  /** @test {Scheduler#createJob} */
+  context(&apos;#createJob()&apos;, () =&gt; {
+    let scheduler = null;
+    beforeEach(() =&gt; {
+      scheduler = new Scheduler({robot, storeKey, job: DummyJob});
+    });
+
+    it(&apos;pattern: * 0 * * *&apos;, () =&gt; {
+      const pattern = &apos;* 0 * * *&apos;;
+      const job = scheduler.createJob({pattern, user, meta});
+      const id = job.id;
+      assert(typeof id === &apos;number&apos;);
+      assert(scheduler.jobs[id] === job);
+      assert.deepEqual(brainData[id], {
+        pattern, meta, user
+      });
+    });
+
+    it(&apos;pattern: 2016-02-20&apos;, () =&gt; {
+      const pattern = &apos;2016-02-20&apos;;
+      const job = scheduler.createJob({pattern, user, meta});
+      const id = job.id;
+      assert(typeof id === &apos;number&apos;);
+      assert(scheduler.jobs[id] === job);
+      assert.deepEqual(brainData[id], {
+        pattern: new Date(pattern), meta, user
+      });
+      assert(job.cb);
+    });
+  });
+
+  /** @test {Scheduler#cancelJob} */
+  context(&apos;#cancelJob()&apos;, () =&gt; {
+    let scheduler = null;
+    beforeEach(() =&gt; {
+      scheduler = new Scheduler({robot, storeKey, job: DummyJob});
+    });
+
+    it(&apos;canceled&apos;, () =&gt; {
+      const job = scheduler.createJob({user, meta, pattern: &apos;* 0 * * *&apos;});
+      const id = job.id;
+      scheduler.cancelJob(id);
+      assert(scheduler.jobs[id] === undefined);
+      assert(brainData[id] === undefined);
+    });
+
+    it(&apos;JobNotFound&apos;, () =&gt; {
+      assert.throws(() =&gt; {
+        scheduler.cancelJob(99999999);
+      }, /^JobNotFound: Job ID does not exists.$/);
+    });
+  });
+
+  /** @test {Scheduler#updateJob} */
+  context(&apos;#updateJob()&apos;, () =&gt; {
+    let scheduler = null;
+    beforeEach(() =&gt; {
+      scheduler = new Scheduler({robot, storeKey, job: DummyJob});
+    });
+
+    it(&apos;updated&apos;, () =&gt; {
+      const initData = {user, meta, pattern: &apos;* 0 * * *&apos;};
+      const job = scheduler.createJob(initData);
+      const id = job.id;
+      const data = {message: &apos;updated&apos;};
+      scheduler.updateJob(id, data);
+      const updatedData = Object.assign({}, initData, {meta: data});
+      assert(scheduler.jobs[id] === job);
+      assert.deepEqual(brainData[id], updatedData);
+    });
+
+    it(&apos;JobNotFound&apos;, () =&gt; {
+      assert.throws(() =&gt; {
+        scheduler.updateJob(99999999);
+      }, /^JobNotFound: Job ID does not exists.$/);
+    });
+  });
+
+  /** @test {Scheduler#syncBrain} */
+  context(&apos;#syncBrain()&apos;, () =&gt; {
+    let scheduler = null;
+    beforeEach(() =&gt; {
+      scheduler = new Scheduler({robot, storeKey, job: DummyJob});
+    });
+
+    it(&apos;sync brain data&apos;, () =&gt; {
+      const existsId = 9999999;
+      const initData = {user, meta, pattern: &apos;* 0 * * *&apos;};
+      const job = scheduler.createJob(initData);
+      brainData = {[existsId]: {user, meta, pattern: &apos;* 1 * * *&apos;}};
+      scheduler.syncBrain();
+      assert.deepEqual(Object.keys(scheduler.jobs), [job.id, existsId]);
+    });
+
+    it(&apos;on brain.loaded&apos;, () =&gt; {
+      const existsId = 9999999;
+      const initData = {user, meta, pattern: &apos;* 0 * * *&apos;};
+      const job = scheduler.createJob(initData);
+      brainData = {[existsId]: {user, meta, pattern: &apos;* 1 * * *&apos;}};
+      robot.brain.on.args[0][1]();
+      assert.deepEqual(Object.keys(scheduler.jobs), [job.id, existsId]);
+    });
+  });
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.4)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

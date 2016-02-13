@@ -1,0 +1,2360 @@
+[
+  {
+    "__docId__": 0,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/Job.js",
+    "memberof": null,
+    "longname": "src/Job.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import schedule from 'node-schedule';\n\n\n/**\n * Base Job class\n */\nclass Job {\n  /**\n   * Constructor\n   *\n   * @param {Object} param param\n   * @param {number} param.id Job id\n   * @param {string} param.pattern pattern string\n   * @param {Object} param.user Hubot user\n   * @param {Object} param.meta Data for Job\n   * @param {Function} [param.cb] callback\n   */\n  constructor({id, pattern, user, meta, cb}) {\n    /**\n     * Job id\n     *\n     * @type {number}\n     */\n    this.id = id;\n\n    /**\n     * pattern\n     *\n     * @type {string}\n     */\n    this.pattern = pattern;\n\n    /**\n     * Instance of node-schedule Job\n     *\n     * @type {Object|null}\n     */\n    this.job = null;\n\n    /**\n     * Object of serialized Hubot user\n     *\n     * @type {Object}\n     */\n    this.user = {};\n\n    /**\n     * Data for Job\n     *\n     * @type {Object}\n     */\n    this.meta = meta;\n\n    /**\n     * Callback\n     *\n     * @type {Function?}\n     */\n    this.cb = cb;\n\n    Object.keys(user).forEach(k => {\n      this.user[k] = user[k];\n    });\n  }\n\n  /**\n   * Execute Job\n   *\n   * @param {Object} robot Hubot robot\n   */\n  exec(robot) {  // eslint-disable-line no-unused-vars\n    // ex.\n    //\n    // ```\n    // envelope = @getEnvelope()\n    // {message} = @meta\n    // return -> robot.send envelope, message\n    // ```\n    throw new Error('NotImplemented');\n  }\n\n  /**\n   * Get Hubot room id\n   *\n   * @return {string}\n   */\n  getRoom() {\n    return this.user.room || this.user.reply_to;\n  }\n\n  /**\n   * Get envelope for robot\n   *\n   * @return {Object}\n   */\n  getEnvelope() {\n    return {user: this.user, room: this.getRoom()};\n  }\n\n  /**\n   * Start Job\n   *\n   * @param {Object} robot Hubot robot\n   */\n  start(robot) {\n    this.job = schedule.scheduleJob(this.pattern, () => {\n      this.exec(robot);\n      if (this.cb) {\n        this.cb();\n      }\n    });\n  }\n\n  /**\n   * Cancel Job\n   */\n  cancel() {\n    if (this.job) {\n      this.job.cancel();\n    }\n    if (this.cb) {\n      this.cb();\n    }\n  }\n\n  /**\n   * Serialize Job data\n   *\n   * @return {Object}\n   */\n  serialize() {\n    const {pattern, meta, user} = this;\n    return {pattern, meta, user};\n  }\n}\n\nexport default Job;\n"
+  },
+  {
+    "__docId__": 1,
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "Job",
+    "memberof": "src/Job.js",
+    "longname": "src/Job.js~Job",
+    "access": null,
+    "export": true,
+    "importPath": "@moqada/hubot-schedule-helper/src/Job.js",
+    "importStyle": "Job",
+    "description": "Base Job class",
+    "lineNumber": 7,
+    "interface": false
+  },
+  {
+    "__docId__": 2,
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/Job.js~Job",
+    "longname": "src/Job.js~Job#constructor",
+    "access": null,
+    "description": "Constructor",
+    "lineNumber": 18,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "param",
+        "description": "param"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "param.id",
+        "description": "Job id"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "param.pattern",
+        "description": "pattern string"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "param.user",
+        "description": "Hubot user"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "param.meta",
+        "description": "Data for Job"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Function"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "param.cb",
+        "description": "callback"
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 3,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "id",
+    "memberof": "src/Job.js~Job",
+    "longname": "src/Job.js~Job#id",
+    "access": null,
+    "description": "Job id",
+    "lineNumber": 24,
+    "type": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 4,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "pattern",
+    "memberof": "src/Job.js~Job",
+    "longname": "src/Job.js~Job#pattern",
+    "access": null,
+    "description": "pattern",
+    "lineNumber": 31,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 5,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "job",
+    "memberof": "src/Job.js~Job",
+    "longname": "src/Job.js~Job#job",
+    "access": null,
+    "description": "Instance of node-schedule Job",
+    "lineNumber": 38,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Object",
+        "null"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 6,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "user",
+    "memberof": "src/Job.js~Job",
+    "longname": "src/Job.js~Job#user",
+    "access": null,
+    "description": "Object of serialized Hubot user",
+    "lineNumber": 45,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 7,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "meta",
+    "memberof": "src/Job.js~Job",
+    "longname": "src/Job.js~Job#meta",
+    "access": null,
+    "description": "Data for Job",
+    "lineNumber": 52,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 8,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "cb",
+    "memberof": "src/Job.js~Job",
+    "longname": "src/Job.js~Job#cb",
+    "access": null,
+    "description": "Callback",
+    "lineNumber": 59,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Function?"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 9,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "exec",
+    "memberof": "src/Job.js~Job",
+    "longname": "src/Job.js~Job#exec",
+    "access": null,
+    "description": "Execute Job",
+    "lineNumber": 71,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "robot",
+        "description": "Hubot robot"
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 10,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "getRoom",
+    "memberof": "src/Job.js~Job",
+    "longname": "src/Job.js~Job#getRoom",
+    "access": null,
+    "description": "Get Hubot room id",
+    "lineNumber": 87,
+    "params": [],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 11,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "getEnvelope",
+    "memberof": "src/Job.js~Job",
+    "longname": "src/Job.js~Job#getEnvelope",
+    "access": null,
+    "description": "Get envelope for robot",
+    "lineNumber": 96,
+    "params": [],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 12,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "start",
+    "memberof": "src/Job.js~Job",
+    "longname": "src/Job.js~Job#start",
+    "access": null,
+    "description": "Start Job",
+    "lineNumber": 105,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "robot",
+        "description": "Hubot robot"
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 13,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "job",
+    "memberof": "src/Job.js~Job",
+    "longname": "src/Job.js~Job#job",
+    "access": null,
+    "description": null,
+    "lineNumber": 106,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 14,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "cancel",
+    "memberof": "src/Job.js~Job",
+    "longname": "src/Job.js~Job#cancel",
+    "access": null,
+    "description": "Cancel Job",
+    "lineNumber": 117,
+    "params": [],
+    "generator": false
+  },
+  {
+    "__docId__": 15,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "serialize",
+    "memberof": "src/Job.js~Job",
+    "longname": "src/Job.js~Job#serialize",
+    "access": null,
+    "description": "Serialize Job data",
+    "lineNumber": 131,
+    "params": [],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 16,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/Scheduler.js",
+    "memberof": null,
+    "longname": "src/Scheduler.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import {difference, getPatternType} from './utils';\nimport {JobNotFound} from './errors';\n\nconst DEFAULT_JOB_MAX_COUNT = 10000;\n\n\n/**\n * Scheduler\n */\nclass Scheduler {\n  /**\n   * Constructor\n   *\n   * @param {Object} params params\n   * @param {Object} params.robot Hubot robot object\n   * @param {string} params.storeKey key of Hubot brain\n   * @param {Object} params.job Job class\n   * @param {number} [params.jobMaxCount=10000] max number of jobs\n   */\n  constructor({robot, storeKey, job, jobMaxCount = DEFAULT_JOB_MAX_COUNT}) {\n    /**\n     * Job list\n     *\n     * @type {Object}\n     */\n    this.jobs = {};\n\n    /**\n     * Hubot robot object\n     *\n     * @type {Object}\n     */\n    this.robot = robot;\n\n    /**\n     * key of Hubot brain\n     *\n     * @type {string}\n     */\n    this.storeKey = storeKey;\n\n    /**\n     * Job class\n     *\n     * @type {Job}\n     */\n    this.JobCls = job;\n\n    /**\n     * Max number of jobs\n     *\n     * @type {number}\n     */\n    this.jobMaxCount = jobMaxCount;\n\n    this.robot.brain.on('loaded', () => this.syncBrain());\n    this.initBrain();\n  }\n\n  /**\n   * Initialize Hubot brain\n   */\n  initBrain() {\n    if (!this.robot.brain.get(this.storeKey)) {\n      this.robot.brain.set(this.storeKey, {});\n    }\n  }\n\n  /**\n   * Cancel Job\n   *\n   * @param {number} id Job id\n   */\n  cancelJob(id) {\n    const job = this.jobs[id];\n    if (!job) {\n      throw new JobNotFound();\n    }\n    job.cancel();\n    delete this.jobs[id];\n    delete this.robot.brain.get(this.storeKey)[id];\n  }\n\n  /**\n   * Create new Job\n   *\n   * @param {Object} params params\n   * @param {string} params.pattern Cron pattern or Date string\n   * @param {Object} params.user Target Hubot user\n   * @param {Object} params.meta data for using Job\n   * @param {number} [params.id] Job id\n   * @return {Job}\n   */\n  createJob({pattern, user, meta, id}) {\n    const jobId = id || this.createId();\n    const patternType = getPatternType(pattern);\n    let job = null;\n    if (patternType === 'cron') {\n      job = this.createCronJob({pattern, user, meta, id: jobId});\n    } else {\n      job = this.createDateJob({pattern, user, meta, id: jobId});\n    }\n    job.start(this.robot);\n    this.jobs[jobId] = job;\n    this.storeJobToBrain(jobId, job);\n    return job;\n  }\n\n  /**\n   * Create Job id\n   *\n   * @return {number}\n   */\n  createId() {\n    let id = null;\n    while (!id || this.jobs[id]) {\n      id = Math.floor(Math.random() * this.jobMaxCount);\n    }\n    return id;\n  }\n\n  /**\n   * Create new CronJob\n   *\n   * @param {Object} params params\n   * @param {string} params.pattern Cron pattern\n   * @param {Object} params.user Target Hubot user\n   * @param {Object} params.meta Data for using Job\n   * @param {number} params.id Job id\n   * @return {Job}\n   */\n  createCronJob({pattern, user, meta, id}) {\n    return new this.JobCls({id, pattern, user, meta});\n  }\n\n  /**\n   * Create new DateJob\n   *\n   * @param {Object} params params\n   * @param {string} params.pattern Date string\n   * @param {Object} params.user Target Hubot user\n   * @param {Object} params.meta Data for using Job\n   * @param {number} params.id Job id\n   * @return {Job}\n   */\n  createDateJob({pattern, user, meta, id}) {\n    return new this.JobCls({\n      id,\n      user,\n      meta,\n      pattern: new Date(pattern),\n      cb: () => {\n        delete this.jobs[id];\n        delete this.robot.brain.get(this.storeKey)[id];\n      }\n    });\n  }\n\n  /**\n   * Create new Job from brain\n   *\n   * @param {number} id Job id\n   * @param {Object} data Date for Job\n   * @returns {Job}\n   */\n  createJobFromBrain(id, data) {\n    const {pattern, user, meta} = data;\n    return this.createJob({pattern, user, meta, id});\n  }\n\n  /**\n   * Store Job to brain\n   *\n   * @param {number} id Job id\n   * @param {Job} job Job\n   */\n  storeJobToBrain(id, job) {\n    this.robot.brain.get(this.storeKey)[id] = job.serialize();\n  }\n\n  /**\n   * Sync Jobs from Brain\n   */\n  syncBrain() {\n    this.initBrain();\n    const nonCachedJobs = difference(this.robot.brain.get(this.storeKey), this.jobs);\n    Object.getOwnPropertyNames(nonCachedJobs).forEach(id => {\n      const jobData = nonCachedJobs[id];\n      this.createJobFromBrain(id, jobData);\n    });\n    const nonStoredJobs = difference(this.jobs, this.robot.brain.get(this.storeKey));\n    Object.getOwnPropertyNames(nonStoredJobs).forEach(id => {\n      const job = nonStoredJobs[id];\n      this.storeJobToBrain(id, job);\n    });\n  }\n\n  /**\n   * Update existes Job\n   *\n   * @param {number} id Job id\n   * @param {Object} meta Data for Job\n   */\n  updateJob(id, meta) {\n    const job = this.jobs[id];\n    if (!job) {\n      throw new JobNotFound();\n    }\n    job.meta = meta;\n    this.robot.brain.get(this.storeKey)[id] = job.serialize();\n  }\n}\n\nexport default Scheduler;\n"
+  },
+  {
+    "__docId__": 17,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "DEFAULT_JOB_MAX_COUNT",
+    "memberof": "src/Scheduler.js",
+    "longname": "src/Scheduler.js~DEFAULT_JOB_MAX_COUNT",
+    "access": null,
+    "export": false,
+    "importPath": "@moqada/hubot-schedule-helper/src/Scheduler.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 18,
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "Scheduler",
+    "memberof": "src/Scheduler.js",
+    "longname": "src/Scheduler.js~Scheduler",
+    "access": null,
+    "export": true,
+    "importPath": "@moqada/hubot-schedule-helper/src/Scheduler.js",
+    "importStyle": "Scheduler",
+    "description": "Scheduler",
+    "lineNumber": 10,
+    "interface": false
+  },
+  {
+    "__docId__": 19,
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#constructor",
+    "access": null,
+    "description": "Constructor",
+    "lineNumber": 20,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params",
+        "description": "params"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.robot",
+        "description": "Hubot robot object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.storeKey",
+        "description": "key of Hubot brain"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.job",
+        "description": "Job class"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": true,
+        "defaultValue": "10000",
+        "defaultRaw": 10000,
+        "name": "params.jobMaxCount",
+        "description": "max number of jobs"
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 20,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "jobs",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#jobs",
+    "access": null,
+    "description": "Job list",
+    "lineNumber": 26,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 21,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "robot",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#robot",
+    "access": null,
+    "description": "Hubot robot object",
+    "lineNumber": 33,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 22,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "storeKey",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#storeKey",
+    "access": null,
+    "description": "key of Hubot brain",
+    "lineNumber": 40,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 23,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "JobCls",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#JobCls",
+    "access": null,
+    "description": "Job class",
+    "lineNumber": 47,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Job"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 24,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "jobMaxCount",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#jobMaxCount",
+    "access": null,
+    "description": "Max number of jobs",
+    "lineNumber": 54,
+    "type": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 25,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "initBrain",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#initBrain",
+    "access": null,
+    "description": "Initialize Hubot brain",
+    "lineNumber": 63,
+    "params": [],
+    "generator": false
+  },
+  {
+    "__docId__": 26,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "cancelJob",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#cancelJob",
+    "access": null,
+    "description": "Cancel Job",
+    "lineNumber": 74,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "id",
+        "description": "Job id"
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 27,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "createJob",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#createJob",
+    "access": null,
+    "description": "Create new Job",
+    "lineNumber": 94,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params",
+        "description": "params"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.pattern",
+        "description": "Cron pattern or Date string"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.user",
+        "description": "Target Hubot user"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.meta",
+        "description": "data for using Job"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "params.id",
+        "description": "Job id"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Job"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 28,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "createId",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#createId",
+    "access": null,
+    "description": "Create Job id",
+    "lineNumber": 114,
+    "params": [],
+    "return": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 29,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "createCronJob",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#createCronJob",
+    "access": null,
+    "description": "Create new CronJob",
+    "lineNumber": 132,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params",
+        "description": "params"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.pattern",
+        "description": "Cron pattern"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.user",
+        "description": "Target Hubot user"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.meta",
+        "description": "Data for using Job"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.id",
+        "description": "Job id"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Job"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 30,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "createDateJob",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#createDateJob",
+    "access": null,
+    "description": "Create new DateJob",
+    "lineNumber": 146,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params",
+        "description": "params"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.pattern",
+        "description": "Date string"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.user",
+        "description": "Target Hubot user"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.meta",
+        "description": "Data for using Job"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.id",
+        "description": "Job id"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Job"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 31,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "createJobFromBrain",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#createJobFromBrain",
+    "access": null,
+    "description": "Create new Job from brain",
+    "lineNumber": 166,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Job}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "id",
+        "description": "Job id"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": "Date for Job"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Job"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 32,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "storeJobToBrain",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#storeJobToBrain",
+    "access": null,
+    "description": "Store Job to brain",
+    "lineNumber": 177,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "id",
+        "description": "Job id"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Job"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "job",
+        "description": "Job"
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 33,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "syncBrain",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#syncBrain",
+    "access": null,
+    "description": "Sync Jobs from Brain",
+    "lineNumber": 184,
+    "params": [],
+    "generator": false
+  },
+  {
+    "__docId__": 34,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "updateJob",
+    "memberof": "src/Scheduler.js~Scheduler",
+    "longname": "src/Scheduler.js~Scheduler#updateJob",
+    "access": null,
+    "description": "Update existes Job",
+    "lineNumber": 204,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "id",
+        "description": "Job id"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "meta",
+        "description": "Data for Job"
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 35,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/errors.js",
+    "memberof": null,
+    "longname": "src/errors.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 4,
+    "content": "/**\n * JobNotFound\n */\nexport class JobNotFound extends Error {  // eslint-disable-line require-jsdoc\n  /**\n   * Constructor\n   *\n   * @param {string} message message\n   */\n  constructor(message = 'Job ID does not exists.') {\n    super(message);\n\n    /**\n     * @type {string}\n     */\n    this.name = 'JobNotFound';\n  }\n}\n\n\n/**\n * InvalidPattern\n */\nexport class InvalidPattern extends Error {  // eslint-disable-line require-jsdoc\n  /**\n   * Constructor\n   *\n   * @param {string} message message\n   */\n  constructor(message = 'Invalid pattern.') {\n    super(message);\n\n    /**\n     * @type {string}\n     */\n    this.name = 'InvalidPattern';\n  }\n}\n\n\n/**\n * AlreadyPassedPattern\n */\nexport class AlreadyPassedPattern extends Error {  // eslint-disable-line require-jsdoc\n  /**\n   * Constructor\n   *\n   * @param {string} message message\n   */\n  constructor(message = 'Pattern date already passed.') {\n    super(message);\n\n    /**\n     * @type {string}\n     */\n    this.name = 'AlreadyPassedPattern';\n  }\n}\n"
+  },
+  {
+    "__docId__": 36,
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "JobNotFound",
+    "memberof": "src/errors.js",
+    "longname": "src/errors.js~JobNotFound",
+    "access": null,
+    "export": true,
+    "importPath": "@moqada/hubot-schedule-helper/src/errors.js",
+    "importStyle": "{JobNotFound}",
+    "description": "JobNotFound",
+    "lineNumber": 4,
+    "interface": false,
+    "extends": [
+      "Error"
+    ]
+  },
+  {
+    "__docId__": 37,
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/errors.js~JobNotFound",
+    "longname": "src/errors.js~JobNotFound#constructor",
+    "access": null,
+    "description": "Constructor",
+    "lineNumber": 10,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "message",
+        "description": "message"
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 38,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "name",
+    "memberof": "src/errors.js~JobNotFound",
+    "longname": "src/errors.js~JobNotFound#name",
+    "access": null,
+    "description": null,
+    "lineNumber": 16,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 39,
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "InvalidPattern",
+    "memberof": "src/errors.js",
+    "longname": "src/errors.js~InvalidPattern",
+    "access": null,
+    "export": true,
+    "importPath": "@moqada/hubot-schedule-helper/src/errors.js",
+    "importStyle": "{InvalidPattern}",
+    "description": "InvalidPattern",
+    "lineNumber": 24,
+    "interface": false,
+    "extends": [
+      "Error"
+    ]
+  },
+  {
+    "__docId__": 40,
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/errors.js~InvalidPattern",
+    "longname": "src/errors.js~InvalidPattern#constructor",
+    "access": null,
+    "description": "Constructor",
+    "lineNumber": 30,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "message",
+        "description": "message"
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 41,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "name",
+    "memberof": "src/errors.js~InvalidPattern",
+    "longname": "src/errors.js~InvalidPattern#name",
+    "access": null,
+    "description": null,
+    "lineNumber": 36,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 42,
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "AlreadyPassedPattern",
+    "memberof": "src/errors.js",
+    "longname": "src/errors.js~AlreadyPassedPattern",
+    "access": null,
+    "export": true,
+    "importPath": "@moqada/hubot-schedule-helper/src/errors.js",
+    "importStyle": "{AlreadyPassedPattern}",
+    "description": "AlreadyPassedPattern",
+    "lineNumber": 44,
+    "interface": false,
+    "extends": [
+      "Error"
+    ]
+  },
+  {
+    "__docId__": 43,
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/errors.js~AlreadyPassedPattern",
+    "longname": "src/errors.js~AlreadyPassedPattern#constructor",
+    "access": null,
+    "description": "Constructor",
+    "lineNumber": 50,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "message",
+        "description": "message"
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 44,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "name",
+    "memberof": "src/errors.js~AlreadyPassedPattern",
+    "longname": "src/errors.js~AlreadyPassedPattern#name",
+    "access": null,
+    "description": null,
+    "lineNumber": 56,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 45,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/index.js",
+    "memberof": null,
+    "longname": "src/index.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import Job from './Job';\nimport Scheduler from './Scheduler';\nimport {\n  AlreadyPassedPattern,\n  InvalidPattern,\n  JobNotFound\n} from './errors';\n\nexport {\n  Job,\n  Scheduler,\n  AlreadyPassedPattern,\n  InvalidPattern,\n  JobNotFound\n};\n"
+  },
+  {
+    "__docId__": 46,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/utils.js",
+    "memberof": null,
+    "longname": "src/utils.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import cronParser from 'cron-parser';\nimport {AlreadyPassedPattern, InvalidPattern} from './errors';\n\n\n/**\n * Diff of Object\n *\n * @param {Object} obj1 target object\n * @param {Object} obj2 target object\n * @return {Object}\n */\nexport function difference(obj1 = {}, obj2 = {}) {\n  const diff = {};\n  Object.keys(obj1).forEach(id => {\n    const job = obj1[id];\n    if (!obj2[id]) {\n      diff[id] = job;\n    }\n  });\n  return diff;\n}\n\n\n/**\n * is Cron pattern\n *\n * @param {string} pattern pattern string\n * @return {boolean}\n */\nexport function isCronPattern(pattern) {\n  const errors = cronParser.parseString(pattern).errors;\n  return !Object.keys(errors).length;\n}\n\n\n/**\n * Return pattern type (`cron` or `date`)\n *\n * @param {string} pattern pattern string\n * @return {string}\n */\nexport function getPatternType(pattern) {\n  if (isCronPattern(pattern)) {\n    return 'cron';\n  }\n  const date = Date.parse(pattern);\n  if (!isNaN(date)) {\n    if (date < Date.now()) {\n      throw new AlreadyPassedPattern();\n    }\n    return 'date';\n  }\n  throw new InvalidPattern();\n}\n"
+  },
+  {
+    "__docId__": 47,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "difference",
+    "memberof": "src/utils.js",
+    "longname": "src/utils.js~difference",
+    "access": null,
+    "export": true,
+    "importPath": "@moqada/hubot-schedule-helper/src/utils.js",
+    "importStyle": "{difference}",
+    "description": "Diff of Object",
+    "lineNumber": 12,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "obj1",
+        "description": "target object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "obj2",
+        "description": "target object"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 48,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "isCronPattern",
+    "memberof": "src/utils.js",
+    "longname": "src/utils.js~isCronPattern",
+    "access": null,
+    "export": true,
+    "importPath": "@moqada/hubot-schedule-helper/src/utils.js",
+    "importStyle": "{isCronPattern}",
+    "description": "is Cron pattern",
+    "lineNumber": 30,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "pattern",
+        "description": "pattern string"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "boolean"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 49,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "getPatternType",
+    "memberof": "src/utils.js",
+    "longname": "src/utils.js~getPatternType",
+    "access": null,
+    "export": true,
+    "importPath": "@moqada/hubot-schedule-helper/src/utils.js",
+    "importStyle": "{getPatternType}",
+    "description": "Return pattern type (`cron` or `date`)",
+    "lineNumber": 42,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "pattern",
+        "description": "pattern string"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 51,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Infinity",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Infinity",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 52,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "NaN",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~NaN",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 53,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "undefined",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~undefined",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 54,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "null",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~null",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 55,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Object",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 56,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~object",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 57,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Function",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 58,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~function",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 59,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Boolean",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 60,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~boolean",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 61,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Symbol",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Symbol",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 62,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Error",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Error",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 63,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "EvalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~EvalError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 64,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "InternalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~InternalError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 65,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "RangeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RangeError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 66,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "ReferenceError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 67,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "SyntaxError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 68,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "TypeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~TypeError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 69,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "URIError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~URIError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 70,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Number",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 71,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~number",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 72,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Date",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Date",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 73,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "String",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~String",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 74,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "string",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~string",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 75,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "RegExp",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RegExp",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 76,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 77,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 78,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 79,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint8ClampedArray",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 80,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 81,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 82,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 83,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 84,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Float32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 85,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Float64Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 86,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Map",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Map",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 87,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Set",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Set",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 88,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "WeakMap",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 89,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "WeakSet",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 90,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "ArrayBuffer",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 91,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "DataView",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~DataView",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 92,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "JSON",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~JSON",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 93,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Promise",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Promise",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 94,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Generator",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Generator",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 95,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "GeneratorFunction",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 96,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Reflect",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Reflect",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 97,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Proxy",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Proxy",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 99,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "CanvasRenderingContext2D",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 100,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "DocumentFragment",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 101,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Element",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Element",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 102,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Event",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Event",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 103,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Node",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Node",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 104,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "NodeList",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~NodeList",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 105,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "XMLHttpRequest",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 106,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "AudioContext",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 107,
+    "kind": "testFile",
+    "static": true,
+    "variation": null,
+    "name": "test/Scheduler-spec.js",
+    "memberof": null,
+    "longname": "test/Scheduler-spec.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import assert from 'power-assert';\nimport clearRequire from 'clear-require';\nimport sinon from 'sinon';\nimport {Job, Scheduler} from '../src';\n\n/** @test {Scheduler} */\ndescribe('Scheduler', () => {\n  const storeKey = 'brain-key';\n  const now = Date.parse('2016-02-10T12:00:00Z');\n  const user = {name: 'moqada'};\n  const meta = {message: 'we are!'};\n  let robot = null;\n  let sandbox = null;\n  let DummyJob = null;\n  let spies = null;\n  let brainData = null;\n  beforeEach(() => {\n    clearRequire('node-schedule');\n    sandbox = sinon.sandbox.create();\n    sandbox.useFakeTimers(now);\n    brainData = {};\n    spies = {exec: sandbox.spy()};\n    DummyJob = class extends Job {\n      exec(robot_) {\n        spies.exec(robot_);\n      }\n    };\n    robot = {\n      brain: {\n        get: sandbox.spy(() => brainData),\n        on: sandbox.spy(),\n        set: sandbox.spy()\n      }\n    };\n  });\n  afterEach(() => {\n    sandbox.restore();\n  });\n\n  /** @test {Scheduler#constructor} */\n  context('constructor()', () => {\n    let scheduler = null;\n    const job = DummyJob;\n    beforeEach(() => {\n      scheduler = new Scheduler({robot, storeKey, job});\n    });\n\n    it('instance', () => {\n      assert(scheduler.robot === robot);\n      assert(scheduler.storeKey === storeKey);\n      assert(scheduler.JobCls === job);\n      assert(scheduler.jobMaxCount === 10000);\n    });\n\n    it('set brain.loaded', () => {\n      const {args} = robot.brain.on;\n      assert(args.length === 1);\n      assert(args[0][0] === 'loaded');\n      assert(typeof args[0][1] === 'function');\n    });\n  });\n\n  /** @test {Scheduler#createJob} */\n  context('#createJob()', () => {\n    let scheduler = null;\n    beforeEach(() => {\n      scheduler = new Scheduler({robot, storeKey, job: DummyJob});\n    });\n\n    it('pattern: * 0 * * *', () => {\n      const pattern = '* 0 * * *';\n      const job = scheduler.createJob({pattern, user, meta});\n      const id = job.id;\n      assert(typeof id === 'number');\n      assert(scheduler.jobs[id] === job);\n      assert.deepEqual(brainData[id], {\n        pattern, meta, user\n      });\n    });\n\n    it('pattern: 2016-02-20', () => {\n      const pattern = '2016-02-20';\n      const job = scheduler.createJob({pattern, user, meta});\n      const id = job.id;\n      assert(typeof id === 'number');\n      assert(scheduler.jobs[id] === job);\n      assert.deepEqual(brainData[id], {\n        pattern: new Date(pattern), meta, user\n      });\n      assert(job.cb);\n    });\n  });\n\n  /** @test {Scheduler#cancelJob} */\n  context('#cancelJob()', () => {\n    let scheduler = null;\n    beforeEach(() => {\n      scheduler = new Scheduler({robot, storeKey, job: DummyJob});\n    });\n\n    it('canceled', () => {\n      const job = scheduler.createJob({user, meta, pattern: '* 0 * * *'});\n      const id = job.id;\n      scheduler.cancelJob(id);\n      assert(scheduler.jobs[id] === undefined);\n      assert(brainData[id] === undefined);\n    });\n\n    it('JobNotFound', () => {\n      assert.throws(() => {\n        scheduler.cancelJob(99999999);\n      }, /^JobNotFound: Job ID does not exists.$/);\n    });\n  });\n\n  /** @test {Scheduler#updateJob} */\n  context('#updateJob()', () => {\n    let scheduler = null;\n    beforeEach(() => {\n      scheduler = new Scheduler({robot, storeKey, job: DummyJob});\n    });\n\n    it('updated', () => {\n      const initData = {user, meta, pattern: '* 0 * * *'};\n      const job = scheduler.createJob(initData);\n      const id = job.id;\n      const data = {message: 'updated'};\n      scheduler.updateJob(id, data);\n      const updatedData = Object.assign({}, initData, {meta: data});\n      assert(scheduler.jobs[id] === job);\n      assert.deepEqual(brainData[id], updatedData);\n    });\n\n    it('JobNotFound', () => {\n      assert.throws(() => {\n        scheduler.updateJob(99999999);\n      }, /^JobNotFound: Job ID does not exists.$/);\n    });\n  });\n\n  /** @test {Scheduler#syncBrain} */\n  context('#syncBrain()', () => {\n    let scheduler = null;\n    beforeEach(() => {\n      scheduler = new Scheduler({robot, storeKey, job: DummyJob});\n    });\n\n    it('sync brain data', () => {\n      const existsId = 9999999;\n      const initData = {user, meta, pattern: '* 0 * * *'};\n      const job = scheduler.createJob(initData);\n      brainData = {[existsId]: {user, meta, pattern: '* 1 * * *'}};\n      scheduler.syncBrain();\n      assert.deepEqual(Object.keys(scheduler.jobs), [job.id, existsId]);\n    });\n\n    it('on brain.loaded', () => {\n      const existsId = 9999999;\n      const initData = {user, meta, pattern: '* 0 * * *'};\n      const job = scheduler.createJob(initData);\n      brainData = {[existsId]: {user, meta, pattern: '* 1 * * *'}};\n      robot.brain.on.args[0][1]();\n      assert.deepEqual(Object.keys(scheduler.jobs), [job.id, existsId]);\n    });\n  });\n});\n"
+  },
+  {
+    "__docId__": 108,
+    "kind": "testDescribe",
+    "static": true,
+    "variation": null,
+    "name": "describe0",
+    "testId": 0,
+    "memberof": "test/Scheduler-spec.js",
+    "testDepth": 0,
+    "longname": "test/Scheduler-spec.js~describe0",
+    "access": null,
+    "description": "Scheduler",
+    "lineNumber": 7,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Scheduler}"
+      }
+    ],
+    "testTargets": [
+      "Scheduler"
+    ]
+  },
+  {
+    "__docId__": 109,
+    "kind": "testDescribe",
+    "static": true,
+    "variation": null,
+    "name": "context1",
+    "testId": 1,
+    "memberof": "test/Scheduler-spec.js~describe0",
+    "testDepth": 1,
+    "longname": "test/Scheduler-spec.js~describe0.context1",
+    "access": null,
+    "description": "constructor()",
+    "lineNumber": 41,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Scheduler#constructor}"
+      }
+    ],
+    "testTargets": [
+      "Scheduler#constructor"
+    ]
+  },
+  {
+    "__docId__": 110,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it2",
+    "testId": 2,
+    "memberof": "test/Scheduler-spec.js~describe0.context1",
+    "testDepth": 2,
+    "longname": "test/Scheduler-spec.js~describe0.context1.it2",
+    "access": null,
+    "description": "instance",
+    "lineNumber": 48
+  },
+  {
+    "__docId__": 111,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it3",
+    "testId": 3,
+    "memberof": "test/Scheduler-spec.js~describe0.context1",
+    "testDepth": 2,
+    "longname": "test/Scheduler-spec.js~describe0.context1.it3",
+    "access": null,
+    "description": "set brain.loaded",
+    "lineNumber": 55
+  },
+  {
+    "__docId__": 112,
+    "kind": "testDescribe",
+    "static": true,
+    "variation": null,
+    "name": "context4",
+    "testId": 4,
+    "memberof": "test/Scheduler-spec.js~describe0",
+    "testDepth": 1,
+    "longname": "test/Scheduler-spec.js~describe0.context4",
+    "access": null,
+    "description": "#createJob()",
+    "lineNumber": 64,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Scheduler#createJob}"
+      }
+    ],
+    "testTargets": [
+      "Scheduler#createJob"
+    ]
+  },
+  {
+    "__docId__": 113,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it5",
+    "testId": 5,
+    "memberof": "test/Scheduler-spec.js~describe0.context4",
+    "testDepth": 2,
+    "longname": "test/Scheduler-spec.js~describe0.context4.it5",
+    "access": null,
+    "description": "pattern: * 0 * * *",
+    "lineNumber": 70
+  },
+  {
+    "__docId__": 114,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it6",
+    "testId": 6,
+    "memberof": "test/Scheduler-spec.js~describe0.context4",
+    "testDepth": 2,
+    "longname": "test/Scheduler-spec.js~describe0.context4.it6",
+    "access": null,
+    "description": "pattern: 2016-02-20",
+    "lineNumber": 81
+  },
+  {
+    "__docId__": 115,
+    "kind": "testDescribe",
+    "static": true,
+    "variation": null,
+    "name": "context7",
+    "testId": 7,
+    "memberof": "test/Scheduler-spec.js~describe0",
+    "testDepth": 1,
+    "longname": "test/Scheduler-spec.js~describe0.context7",
+    "access": null,
+    "description": "#cancelJob()",
+    "lineNumber": 95,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Scheduler#cancelJob}"
+      }
+    ],
+    "testTargets": [
+      "Scheduler#cancelJob"
+    ]
+  },
+  {
+    "__docId__": 116,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it8",
+    "testId": 8,
+    "memberof": "test/Scheduler-spec.js~describe0.context7",
+    "testDepth": 2,
+    "longname": "test/Scheduler-spec.js~describe0.context7.it8",
+    "access": null,
+    "description": "canceled",
+    "lineNumber": 101
+  },
+  {
+    "__docId__": 117,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it9",
+    "testId": 9,
+    "memberof": "test/Scheduler-spec.js~describe0.context7",
+    "testDepth": 2,
+    "longname": "test/Scheduler-spec.js~describe0.context7.it9",
+    "access": null,
+    "description": "JobNotFound",
+    "lineNumber": 109
+  },
+  {
+    "__docId__": 118,
+    "kind": "testDescribe",
+    "static": true,
+    "variation": null,
+    "name": "context10",
+    "testId": 10,
+    "memberof": "test/Scheduler-spec.js~describe0",
+    "testDepth": 1,
+    "longname": "test/Scheduler-spec.js~describe0.context10",
+    "access": null,
+    "description": "#updateJob()",
+    "lineNumber": 117,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Scheduler#updateJob}"
+      }
+    ],
+    "testTargets": [
+      "Scheduler#updateJob"
+    ]
+  },
+  {
+    "__docId__": 119,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it11",
+    "testId": 11,
+    "memberof": "test/Scheduler-spec.js~describe0.context10",
+    "testDepth": 2,
+    "longname": "test/Scheduler-spec.js~describe0.context10.it11",
+    "access": null,
+    "description": "updated",
+    "lineNumber": 123
+  },
+  {
+    "__docId__": 120,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it12",
+    "testId": 12,
+    "memberof": "test/Scheduler-spec.js~describe0.context10",
+    "testDepth": 2,
+    "longname": "test/Scheduler-spec.js~describe0.context10.it12",
+    "access": null,
+    "description": "JobNotFound",
+    "lineNumber": 134
+  },
+  {
+    "__docId__": 121,
+    "kind": "testDescribe",
+    "static": true,
+    "variation": null,
+    "name": "context13",
+    "testId": 13,
+    "memberof": "test/Scheduler-spec.js~describe0",
+    "testDepth": 1,
+    "longname": "test/Scheduler-spec.js~describe0.context13",
+    "access": null,
+    "description": "#syncBrain()",
+    "lineNumber": 142,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Scheduler#syncBrain}"
+      }
+    ],
+    "testTargets": [
+      "Scheduler#syncBrain"
+    ]
+  },
+  {
+    "__docId__": 122,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it14",
+    "testId": 14,
+    "memberof": "test/Scheduler-spec.js~describe0.context13",
+    "testDepth": 2,
+    "longname": "test/Scheduler-spec.js~describe0.context13.it14",
+    "access": null,
+    "description": "sync brain data",
+    "lineNumber": 148
+  },
+  {
+    "__docId__": 123,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it15",
+    "testId": 15,
+    "memberof": "test/Scheduler-spec.js~describe0.context13",
+    "testDepth": 2,
+    "longname": "test/Scheduler-spec.js~describe0.context13.it15",
+    "access": null,
+    "description": "on brain.loaded",
+    "lineNumber": 157
+  }
+]

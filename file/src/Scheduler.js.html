@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/Scheduler.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <a data-ice="repoURL" href="https://github.com/moqada/hubot-schedule-helper.git" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Job.js~Job.html">Job</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Scheduler.js~Scheduler.html">Scheduler</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors.js~AlreadyPassedPattern.html">AlreadyPassedPattern</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors.js~InvalidPattern.html">InvalidPattern</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors.js~JobNotFound.html">JobNotFound</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-difference">difference</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getPatternType">getPatternType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isCronPattern">isCronPattern</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/Scheduler.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {difference, getPatternType} from &apos;./utils&apos;;
+import {JobNotFound} from &apos;./errors&apos;;
+
+const DEFAULT_JOB_MAX_COUNT = 10000;
+
+
+/**
+ * Scheduler
+ */
+class Scheduler {
+  /**
+   * Constructor
+   *
+   * @param {Object} params params
+   * @param {Object} params.robot Hubot robot object
+   * @param {string} params.storeKey key of Hubot brain
+   * @param {Object} params.job Job class
+   * @param {number} [params.jobMaxCount=10000] max number of jobs
+   */
+  constructor({robot, storeKey, job, jobMaxCount = DEFAULT_JOB_MAX_COUNT}) {
+    /**
+     * Job list
+     *
+     * @type {Object}
+     */
+    this.jobs = {};
+
+    /**
+     * Hubot robot object
+     *
+     * @type {Object}
+     */
+    this.robot = robot;
+
+    /**
+     * key of Hubot brain
+     *
+     * @type {string}
+     */
+    this.storeKey = storeKey;
+
+    /**
+     * Job class
+     *
+     * @type {Job}
+     */
+    this.JobCls = job;
+
+    /**
+     * Max number of jobs
+     *
+     * @type {number}
+     */
+    this.jobMaxCount = jobMaxCount;
+
+    this.robot.brain.on(&apos;loaded&apos;, () =&gt; this.syncBrain());
+    this.initBrain();
+  }
+
+  /**
+   * Initialize Hubot brain
+   */
+  initBrain() {
+    if (!this.robot.brain.get(this.storeKey)) {
+      this.robot.brain.set(this.storeKey, {});
+    }
+  }
+
+  /**
+   * Cancel Job
+   *
+   * @param {number} id Job id
+   */
+  cancelJob(id) {
+    const job = this.jobs[id];
+    if (!job) {
+      throw new JobNotFound();
+    }
+    job.cancel();
+    delete this.jobs[id];
+    delete this.robot.brain.get(this.storeKey)[id];
+  }
+
+  /**
+   * Create new Job
+   *
+   * @param {Object} params params
+   * @param {string} params.pattern Cron pattern or Date string
+   * @param {Object} params.user Target Hubot user
+   * @param {Object} params.meta data for using Job
+   * @param {number} [params.id] Job id
+   * @return {Job}
+   */
+  createJob({pattern, user, meta, id}) {
+    const jobId = id || this.createId();
+    const patternType = getPatternType(pattern);
+    let job = null;
+    if (patternType === &apos;cron&apos;) {
+      job = this.createCronJob({pattern, user, meta, id: jobId});
+    } else {
+      job = this.createDateJob({pattern, user, meta, id: jobId});
+    }
+    job.start(this.robot);
+    this.jobs[jobId] = job;
+    this.storeJobToBrain(jobId, job);
+    return job;
+  }
+
+  /**
+   * Create Job id
+   *
+   * @return {number}
+   */
+  createId() {
+    let id = null;
+    while (!id || this.jobs[id]) {
+      id = Math.floor(Math.random() * this.jobMaxCount);
+    }
+    return id;
+  }
+
+  /**
+   * Create new CronJob
+   *
+   * @param {Object} params params
+   * @param {string} params.pattern Cron pattern
+   * @param {Object} params.user Target Hubot user
+   * @param {Object} params.meta Data for using Job
+   * @param {number} params.id Job id
+   * @return {Job}
+   */
+  createCronJob({pattern, user, meta, id}) {
+    return new this.JobCls({id, pattern, user, meta});
+  }
+
+  /**
+   * Create new DateJob
+   *
+   * @param {Object} params params
+   * @param {string} params.pattern Date string
+   * @param {Object} params.user Target Hubot user
+   * @param {Object} params.meta Data for using Job
+   * @param {number} params.id Job id
+   * @return {Job}
+   */
+  createDateJob({pattern, user, meta, id}) {
+    return new this.JobCls({
+      id,
+      user,
+      meta,
+      pattern: new Date(pattern),
+      cb: () =&gt; {
+        delete this.jobs[id];
+        delete this.robot.brain.get(this.storeKey)[id];
+      }
+    });
+  }
+
+  /**
+   * Create new Job from brain
+   *
+   * @param {number} id Job id
+   * @param {Object} data Date for Job
+   * @returns {Job}
+   */
+  createJobFromBrain(id, data) {
+    const {pattern, user, meta} = data;
+    return this.createJob({pattern, user, meta, id});
+  }
+
+  /**
+   * Store Job to brain
+   *
+   * @param {number} id Job id
+   * @param {Job} job Job
+   */
+  storeJobToBrain(id, job) {
+    this.robot.brain.get(this.storeKey)[id] = job.serialize();
+  }
+
+  /**
+   * Sync Jobs from Brain
+   */
+  syncBrain() {
+    this.initBrain();
+    const nonCachedJobs = difference(this.robot.brain.get(this.storeKey), this.jobs);
+    Object.getOwnPropertyNames(nonCachedJobs).forEach(id =&gt; {
+      const jobData = nonCachedJobs[id];
+      this.createJobFromBrain(id, jobData);
+    });
+    const nonStoredJobs = difference(this.jobs, this.robot.brain.get(this.storeKey));
+    Object.getOwnPropertyNames(nonStoredJobs).forEach(id =&gt; {
+      const job = nonStoredJobs[id];
+      this.storeJobToBrain(id, job);
+    });
+  }
+
+  /**
+   * Update existes Job
+   *
+   * @param {number} id Job id
+   * @param {Object} meta Data for Job
+   */
+  updateJob(id, meta) {
+    const job = this.jobs[id];
+    if (!job) {
+      throw new JobNotFound();
+    }
+    job.meta = meta;
+    this.robot.brain.get(this.storeKey)[id] = job.serialize();
+  }
+}
+
+export default Scheduler;
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.4)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
