@@ -1,12 +1,12 @@
 # Description:
-#   Example scripts for hubot-schedule-helper
+#   Example scripts for @moqada/hubot-schedule-helper
 #
 # Commands:
 #   hubot schedule add "<cron pattern>" <message> - Add Schedule
 #   hubot schedule cancel <id> - Cancel Schedule
 #   hubot schedule update <id> <message> - Update Schedule
 #   hubot schedule list - List Schedule
-{Scheduler, Job, JobNotFound, InvalidPattern} = require 'hubot-schedule-helper'
+{Scheduler, Job, JobNotFound, InvalidPattern} = require '@moqada/hubot-schedule-helper'
 
 storeKey = 'hubot-schedule-helper-example:schedule'
 
