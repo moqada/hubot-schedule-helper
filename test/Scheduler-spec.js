@@ -3,6 +3,7 @@ import clearRequire from 'clear-require';
 import sinon from 'sinon';
 import {Job, Scheduler} from '../src';
 
+/** @test {Scheduler} */
 describe('Scheduler', () => {
   const storeKey = 'brain-key';
   const now = Date.parse('2016-02-10T12:00:00Z');
@@ -35,6 +36,8 @@ describe('Scheduler', () => {
   afterEach(() => {
     sandbox.restore();
   });
+
+  /** @test {Scheduler#constructor} */
   context('constructor()', () => {
     let scheduler = null;
     const job = DummyJob;
@@ -57,6 +60,7 @@ describe('Scheduler', () => {
     });
   });
 
+  /** @test {Scheduler#createJob} */
   context('#createJob()', () => {
     let scheduler = null;
     beforeEach(() => {
@@ -87,6 +91,7 @@ describe('Scheduler', () => {
     });
   });
 
+  /** @test {Scheduler#cancelJob} */
   context('#cancelJob()', () => {
     let scheduler = null;
     beforeEach(() => {
@@ -108,6 +113,7 @@ describe('Scheduler', () => {
     });
   });
 
+  /** @test {Scheduler#updateJob} */
   context('#updateJob()', () => {
     let scheduler = null;
     beforeEach(() => {
@@ -132,6 +138,7 @@ describe('Scheduler', () => {
     });
   });
 
+  /** @test {Scheduler#syncBrain} */
   context('#syncBrain()', () => {
     let scheduler = null;
     beforeEach(() => {
