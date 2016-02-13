@@ -1,7 +1,7 @@
 {
   "name": "@moqada/hubot-schedule-helper",
   "description": "Helper of Hubot Scripts for implementing schedule tasks",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "author": "moqada <moqada@gmail.com>",
   "bugs": {
     "url": "https://github.com/moqada/hubot-schedule-helper/issues"
