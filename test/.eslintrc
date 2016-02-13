@@ -1,0 +1,6 @@
+env:
+  mocha: true
+rules:
+  no-magic-numbers: 0
+  require-jsdoc: 0
+  max-statements: 0
