@@ -34,10 +34,10 @@
   ],
   "homepage": "https://github.com/moqada/hubot-schedule-helper#readme",
   "keywords": [
-    "hubot",
-    "schedule",
     "cron",
-    "helper"
+    "helper",
+    "hubot",
+    "schedule"
   ],
   "license": "MIT",
   "main": "lib/index.js",
