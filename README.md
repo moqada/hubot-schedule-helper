@@ -1,7 +1,6 @@
 # hubot-schedule-helper
 
 [![NPM version][npm-image]][npm-url]
-[![NPM downloads][npm-download-image]][npm-download-url]
 [![Build Status][travis-image]][travis-url]
 [![Coverage Status][codecov-image]][codecov-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
@@ -79,8 +78,6 @@ This module's code is greatly inspired by [hubot-schdule](https://github.com/mat
 
 [npm-url]: https://www.npmjs.com/package/@moqada/hubot-schedule-helper
 [npm-image]: https://img.shields.io/npm/v/@moqada/hubot-schedule-helper.svg?style=flat-square
-[npm-download-url]: https://www.npmjs.com/package/@moqada/hubot-schedule-helper
-[npm-download-image]: https://img.shields.io/npm/dt/@moqada/hubot-schedule-helper.svg?style=flat-square
 [travis-url]: https://travis-ci.org/moqada/hubot-schedule-helper
 [travis-image]: https://img.shields.io/travis/moqada/hubot-schedule-helper.svg?style=flat-square
 [daviddm-url]: https://david-dm.org/moqada/hubot-schedule-helper
@@ -90,4 +87,4 @@ This module's code is greatly inspired by [hubot-schdule](https://github.com/mat
 [codecov-url]: https://codecov.io/github/moqada/hubot-schedule-helper
 [codecov-image]: https://img.shields.io/codecov/c/github/moqada/hubot-schedule-helper.svg?style=flat-square
 [license-url]: http://opensource.org/licenses/MIT
-[license-image]: https://img.shields.io/npm/l/@moqada/hubot-schedule-helper.svg?style=flat-square
+[license-image]: https://img.shields.io/github/license/moqada/hubot-schedule-helper.svg?style=flat-square
