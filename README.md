@@ -27,6 +27,7 @@ More detail, see [API Document](https://moqada.github.io/hubot-schedule-helper/)
 
 ```coffee
 {Scheduler, Job} = require '@moqada/hubot-schedule-helper'
+storeKey = 'hubot-scheule-helper-example:schedule'
 
 
 # You must define your Job class extending Job
@@ -41,7 +42,7 @@ class AwesomeJob extends Job
 
 
 module.exports = (robot) ->
-  scheduler = new Scheduler({robot, job: AwesomeJob})
+  scheduler = new Scheduler({robot, storeKey, job: AwesomeJob})
 
   # Add scheduled job (send 'hello! hello!' at every 6 o'clock)
   robot.respond /add/i, (res) ->
