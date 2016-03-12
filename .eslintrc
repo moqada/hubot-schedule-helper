@@ -1,2 +1,4 @@
-extends: moqada
+extends:
+  - moqada
+  - moqada/node
 parser: babel-eslint
