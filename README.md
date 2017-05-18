@@ -1,5 +1,7 @@
 # hubot-schedule-helper
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/moqada/hubot-schedule-helper.svg)](https://greenkeeper.io/)
+
 [![NPM version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Coverage Status][codecov-image]][codecov-url]
